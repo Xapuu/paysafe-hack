@@ -20,7 +20,6 @@ module.exports = (function () {
   var strategy = new Strategy(params, function (payload, done) {
     var user = User.findOne(payload.id)
     if (user) {
-      console.log('in')
       return done(null, {
         id: user.id
       })

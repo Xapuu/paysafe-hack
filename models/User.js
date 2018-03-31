@@ -27,6 +27,4 @@ userSchema.pre('save', function () {
   this.hashedPass = encrypt.generateHashedPassword(this.salt, this.hashedPass)
 })
 
-// TODO seed admin maybe
-
 module.exports = mongoose.model('User', userSchema)
