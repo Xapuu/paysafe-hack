@@ -1,5 +1,6 @@
 const User = require('mongoose').model('User')
 const encrypt = require('./../utils/crypto')
+const tokenConfig = require('./../config/token.config')
 
 var jwt = require('jwt-simple')
 
@@ -20,8 +21,10 @@ const register = (req, res) => {
   }
 
   if (body.password !== body.confirmPassword) {
-    res.status(404).send('Password dosent match')
+    res.status(404).send('Password dosent match').end()
+    return
   }
+
   User.create({
     username: body.username,
     hashedPass: body.password
@@ -35,15 +38,15 @@ const register = (req, res) => {
 }
 
 const login = (req, res) => {
-  const config = {
-    jwtSecret: 'MyS3cr3tK3Y',
-    jwtSession: {
-      session: false
-    }
-  }
+
 
   User.findOne({ username: req.body.username }, (err, user) => {
     if (err) {
+      return
+    }
+
+    if (!user) {
+      res.status(200).send({ message: 'No such user' }).end()
       return
     }
 
@@ -54,7 +57,7 @@ const login = (req, res) => {
       res.status(404).send('Password dosent match').end()
       return
     }
-    const token = jwt.encode(user.id, config.jwtSecret)
+    const token = jwt.encode(user.id, tokenConfig.jwtSecret)
 
     res.json({
       token

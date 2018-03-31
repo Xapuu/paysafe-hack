@@ -1,24 +1,19 @@
 const passport = require('passport')
 const passportJWT = require('passport-jwt')
+const tokenConfig = require('./token.config')
 const ExtractJwt = passportJWT.ExtractJwt
 const Strategy = passportJWT.Strategy
 
 const User = require('mongoose').model('User')
 
-const config = {
-  jwtSecret: 'MyS3cr3tK3Y',
-  jwtSession: {
-    session: false
-  }
-}
 const params = {
-  secretOrKey: config.jwtSecret,
+  secretOrKey: tokenConfig.jwtSecret,
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('jwt')
 }
 
 module.exports = (function () {
-  var strategy = new Strategy(params, function (payload, done) {
-    var user = User.findOne(payload.id)
+  const strategy = new Strategy(params, function (payload, done) {
+    const user = User.findOne(payload.id)
     if (user) {
       return done(null, {
         id: user.id
@@ -33,7 +28,7 @@ module.exports = (function () {
       return passport.initialize()
     },
     authenticate: function () {
-      return passport.authenticate('jwt', config.jwtSession)
+      return passport.authenticate('jwt', tokenConfig.jwtSession)
     }
   }
 })()
