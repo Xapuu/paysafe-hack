@@ -4,6 +4,7 @@ const encrypt = require('./../utils/crypto')
 const userSchema = new mongoose.Schema({
   username: {
     type: mongoose.Schema.Types.String,
+    required: true,
     unique: true
   },
   balance: {
